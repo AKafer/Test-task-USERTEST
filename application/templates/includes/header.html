@@ -1,0 +1,53 @@
+{% load static %}
+<header>
+  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'testing:index' %}">
+        <img
+          src="{% static 'img/logo.png' %}"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt=""
+        />
+        <span style="color: red">Тестирование</span>гуманоидов
+      </a>
+      {% comment %} Меню - список пунктов со стандартными классами Bootsrap.
+      Класс nav-pills нужен для выделения активных пунктов {% endcomment %}
+      {% with request.resolver_match.view_name as view_name %}
+      <ul class="nav nav-pills">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a
+            class="nav-link {% if view_name == 'users:logout' %}active{% endif %} link-light"
+            href="{% url 'users:logout' %}"
+          >
+            Выйти
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"> Пользователь: {{ user.username }} </a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a
+            class="nav-link {% if view_name == 'users:login' %}active{% endif %} link-light"
+            href="{% url 'users:login' %}"
+          >
+            Войти
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if view_name == 'users:signup' %}active{% endif %} link-light"
+            href="{% url 'users:signup' %}"
+          >
+            Регистрация
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+      {% endwith %}
+    </div>
+  </nav>
+</header>
