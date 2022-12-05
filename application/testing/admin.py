@@ -39,10 +39,10 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class ResultAdmin(admin.ModelAdmin):
     """Класс отображения в админке результатов"""
-    list_display = ('id', 'user', 'answer', 'test', 'correct')
-    list_display_links = ('id', 'user', 'answer', 'test', 'correct')
-    search_fields = ('user', 'answer', 'test', 'correct')
-    list_filter = ('user', 'answer', 'test', 'correct')
+    list_display = ('id', 'user', 'question', 'test', 'correct')
+    list_display_links = ('id', 'user', 'question', 'test', 'correct')
+    search_fields = ('user', 'question', 'test', 'correct')
+    list_filter = ('user', 'question', 'test', 'correct')
     empty_value_display = '-пусто-'
     
 

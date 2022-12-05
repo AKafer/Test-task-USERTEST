@@ -2,13 +2,29 @@ $(document).ready(function () {
   let sel_group = $("#select_group");
   let sel_test = $("#select_test");
   let set_questions = new Map();
+  let set_answers = new Map();
+  let number_ques = 0;
+  let number_suq = 0;
+
+  let sort_set_questions = new Map();
+  let ques_numbers = [];
+
+  $("#input_number_questions").val("");
+  $("#input_success_questions").val("");
+  $("#input_persent").val("");
 
   $("#LoginButton").on("click", function () {
     get_groups();
+    $("#input_number_questions").val("");
+    $("#input_success_questions").val("");
+    $("#input_persent").val("");
   });
 
   $("#SignUpButton").on("click", function () {
     get_groups();
+    $("#input_number_questions").val("");
+    $("#input_success_questions").val("");
+    $("#input_persent").val("");
   });
 
   get_groups();
@@ -31,9 +47,6 @@ $(document).ready(function () {
 
   sel_group.change(function () {
     get_tests();
-    // const url = `api/tasks/?status=${sel_status.val()}`;
-    // console.log(url);
-    // table.ajax.url(url).load();
   });
 
   function get_tests() {
@@ -54,115 +67,95 @@ $(document).ready(function () {
   $("#StartTestButton").on("click", function () {
     $("#test-title").html($("#select_test option:selected").text());
     $("#TestModal").fadeIn();
-    console.log("вошла");
-    get_question();
+    get_questions();
+    $("#input_number_questions").val("");
+    $("#input_success_questions").val("");
+    $("#input_persent").val("");
   });
 
-  function get_question() {
-    console.log("вошла1");
+  function get_questions() {
+    number_ques = 0;
+    number_suq = 0;
+    ques_numbers = [];
+    set_questions.clear();
     $("#input_text").val("");
     $.ajax({
       type: "GET",
       url: "api/questions/?test=" + sel_test.val(),
       success: function (response) {
         for (i = 0; i < response.length; i++) {
-          set_questions.set(response[i].id, response[i].question);
+          set_questions.set(response[i].number, {
+            id: response[i].id,
+            question: response[i].question,
+          });
         }
-        console.log("вошла2");
-        console.log({ set_questions });
+        Array.from(set_questions.keys())
+          .sort((a, b) => a - b)
+          .forEach(function (key) {
+            sort_set_questions.set(key, set_questions.get(key));
+          });
+        console.log(sort_set_questions);
+        ques_numbers = Array.from(sort_set_questions.keys());
+        number_ques = ques_numbers.length;
+        next_question();
       },
     });
   }
 
-  function get_question() {
-    console.log("вошла1");
-    $("#input_text").val("");
-    $.ajax({
-      type: "GET",
-      url: "api/questions/?test=" + sel_test.val(),
-      success: function (response) {
-        for (i = 0; i < response.length; i++) {
-          set_questions.set(response[i].number, response[i].question);
-        }
-        console.log({ set_questions });
-        console.log(set_questions.get(1));
-
-        let myarray = new Map();
-        let new_myarray = new Map();
-
-        array = [10, 20, 5, 200, 100];
-        console.log(array.sort((a, b) => a - b));
-        myarray.set(10, 1);
-        myarray.set(5, 100);
-        myarray.set(20, 50);
-        console.log(myarray);
-        console.log(Array.from(myarray.keys()).sort());
-        Array.from(myarray.keys())
-          .sort((a, b) => a - b)
-          .forEach(function (key) {
-            new_myarray.set(key, myarray.get(key));
-          });
-        // myarray.sort((a, b) => a - b);
-        console.log(new_myarray);
-
-        $("#label-question").html(`Вопрос 1:`);
-        $("#input_super").val(set_questions.get(1));
-        console.log("TEXT");
-        console.log($("#input_super").val());
-        get_answers(1);
-      },
-    });
+  function next_question() {
+    if (ques_numbers.length != 0) {
+      const first_number = ques_numbers.shift();
+      $("#label-question").html(`Вопрос ${first_number}:`);
+      $("#input_super").val(sort_set_questions.get(first_number).question);
+      get_answers(sort_set_questions.get(first_number).id);
+      sort_set_questions.delete(first_number);
+    } else {
+      alert("Тест окончен. Смотрите результаты в таблице.");
+      $("#TestModal").fadeOut();
+      console.log("РЕЗУЛЬТАТЫ");
+      console.log(number_ques);
+      console.log(number_suq);
+      console.log(Math.round((number_suq / number_ques) * 100));
+      $("#input_number_questions").val(number_ques);
+      $("#input_success_questions").val(number_suq);
+      $("#input_persent").val(
+        String(Math.round((number_suq / number_ques) * 100)) + "%"
+      );
+    }
   }
 
   function get_answers(question_id) {
     $("#answer_container").empty();
     $("#input_text").val("");
+    set_answers.clear();
     $.ajax({
       type: "GET",
       url: "api/answers/?question=" + question_id,
       success: function (response) {
-        console.log(response);
         for (i = 0; i < response.length; i++) {
-          console.log(response[i]);
-          console.log(response[i].id);
-          console.log(response[i].name);
+          set_answers.set(response[i].id, response[i].correct);
           $("#answer_container").append(
-            `<label><input type="checkbox" id="${response[i].id}" />&#160&#160${response[i].name}</label><p></p>`
+            `<label><input type="checkbox" id="ch${response[i].id}" />&#160&#160${response[i].name}</label><p></p>`
           );
         }
       },
     });
   }
 
-  // console.log("***Table***");
-  // const url = "api/tests/";
-  // console.log(url);
-  // let table = $("#SP_Table").DataTable({
-  //   ajax: {
-  //     url: url,
-  //     dataSrc: "",
-  //   },
-  //   columns: [
-  //     { data: "id", visible: false },
-  //     { data: "status" },
-  //     { data: "start_date" },
-  //     { data: "stop_date" },
-  //     { data: "message" },
-  //     { data: "phones" },
-  //     { data: "clients", visible: false },
-  //   ],
-  //   DisplayLength: 10,
-  //   processing: true,
-  //   lengthMenu: [
-  //     [10, 15, 20, -1],
-  //     [10, 15, 20, "Все"],
-  //   ],
-  //   createdRow: function (row, data) {
-  //     if (data.status) {
-  //       $("td", row).eq(0).html("Ожидание");
-  //     } else {
-  //       $("td", row).eq(0).html("Завершена");
-  //     }
-  //   },
-  // });
+  function check_answer() {
+    console.log("ЧЕКБОКСЫ");
+    for (let entry of set_answers) {
+      console.log($(`#ch${entry}`).is(":checked"), entry[1]);
+      if ($(`#ch${entry[0]}`).is(":checked") != entry[1]) {
+        return false;
+      }
+    }
+    number_suq++;
+  }
+
+  $("#TestOkButton").on("click", function () {
+    console.log("NEXT");
+    check_answer();
+    next_question();
+  });
 });

@@ -32,6 +32,20 @@ class Test(models.Model):
     def __str__(self):
         return self.name
 
+class Answer(models.Model):
+    """
+    Класс Ответ.
+    """
+    name = models.CharField(max_length=150)
+    correct = models.BooleanField(default=False)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return self.name 
+    
 
 class Question(models.Model):
     """
@@ -43,31 +57,19 @@ class Question(models.Model):
         Test,
         on_delete=models.CASCADE,
         related_name='test')
+    answers = models.ManyToManyField(
+        Answer,
+        # through='AnswerCheck',
+        related_name='answers',
+        verbose_name='ответы'
+    )
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
         return self.question
-    
-class Answer(models.Model):
-    """
-    Класс Ответ.
-    """
-    name = models.CharField(max_length=150)
-    correct = models.BooleanField(default=False)
-    question = models.ForeignKey(
-        Question,
-        on_delete=models.CASCADE,
-        related_name='QA')
-
-    
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return self.name     
-
+        
 
 class Result(models.Model):
     """
@@ -78,10 +80,10 @@ class Result(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='user_result')
-    question = models.ForeignKey(
-        Question,
+    answer = models.ForeignKey(
+        Answer,
         on_delete=models.CASCADE,
-        related_name='question_result')
+        related_name='answer_result')
     test = models.ForeignKey(
         Test,
         on_delete=models.CASCADE,
@@ -91,7 +93,31 @@ class Result(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return self.correct
+        return self.correct    
+
+# class AnswerCheck(models.Model):
+#     """
+#     Класс Ответ.
+#     """
+#     answer = models.ForeignKey(
+#         Answer,
+#         on_delete=models.CASCADE,
+#         related_name='check_answer')
+#     question = models.ForeignKey(
+#         Question,
+#         on_delete=models.CASCADE,
+#         related_name='check_question')
+#     correct = models.BooleanField(default=False)
+
+    
+#     class Meta:
+#         ordering = ['id']
+
+#     def __str__(self):
+#         return str(self.id)
+    
+
+
    
 
 

@@ -9,7 +9,7 @@
         </div>
         <div class="modal-body">
 
-        <div class="col-3" id="name_complect">
+        <div class="col-5" id="name_complect">
             <div class="input-group">
               <label class="input-group-text">Набор: </label>
               <select
@@ -23,7 +23,7 @@
             <p></p>
         </div>
         
-        <div class="col-3" id="name_complect">
+        <div class="col-5" id="name_complect">
           <div class="input-group">
             <label class="input-group-text">Тест: </label>
             <select
@@ -44,24 +44,24 @@
             <p></p>
           </div>
 
-        
-          <table
-            class="table table-bordered table-responsive table-striped table-hover"
-            id="SP_Table"
-            style="width: 100%"
-          >
-            <thead>
-              <tr>
-                <th scope="col">id</th>
-                <th scope="col">Статус</th>
-                <th scope="col">Дата создания</th>
-                <th scope="col">Дата исполнения</th>
-                <th scope="col">Сообщения</th>
-                <th scope="col">Телефоны</th>
-                <th scope="col">Клиенты</th>
-              </tr>
-            </thead>
-          </table>
+        <div class="col-5" id="name_complect">
+            <h4 class="modal-title">Результаты теста:</h4>
+        </div>
+
+        <div class="col-5" id="name_complect">
+          <label class="input-group-text">Всего вопросов: </label>
+          <input class="form-control" id="input_number_questions" style="text-align:center">
+        </div>
+
+        <div class="col-5" id="name_complect">
+          <label class="input-group-text">Правильных ответов: </label>
+          <input class="form-control" id="input_success_questions" style="text-align:center">
+        </div>
+
+        <div class="col-5" id="name_complect">
+          <label class="input-group-text">Процент правильных ответов: </label>
+          <input class="form-control" id="input_persent" style="text-align:center">
+        </div>
         </div>
         <div class="modal-footer"></div>
       </div>
@@ -87,13 +87,6 @@
           </div>
 
           <div class="container" id="answer_container"></div>
-            {% comment %} <label><input type="checkbox" id="op1" />&#160&#160Билайн</label>
-            <p></p>
-            <label><input type="checkbox" id="op2"/>&#160&#160МТС</label>
-            <p></p>
-            <label><input type="checkbox" id="op3"/>&#160&#160Мегафон</label>
-            <p></p>
-          </div> {% endcomment %}
 
         <div class="modal-footer">
           <button
@@ -174,12 +167,12 @@
       </div>
     </div>
   </div>
-</html>
-{% else %}
-<p></p>
-<p></p>
+  {% else %}
+    <p></p>
+    <p></p>
     <h4 class="modal-title">Войдите или зарегистрируйтесь</h4>
 {% endif %}
+
 
 {% endblock %} 
 
